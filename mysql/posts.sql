@@ -5,5 +5,6 @@
   `imgdata` mediumblob NOT NULL,
   `body` text NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10012 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci |
+  PRIMARY KEY (`id`),
+  KEY `id_idx` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10062 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci |
