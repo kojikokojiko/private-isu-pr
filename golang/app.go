@@ -211,6 +211,8 @@ func makePosts(results []Post, csrfToken string, allComments bool) ([]Post, erro
 		if len(posts) >= postsPerPage {
 			break
 		}
+		// posts = append(posts, p)
+
 	}
 
 	return posts, nil
@@ -380,7 +382,10 @@ func getIndex(w http.ResponseWriter, r *http.Request) {
 
 	results := []Post{}
 
-	err := db.Select(&results, "SELECT `id`, `user_id`, `body`, `mime`, `created_at` FROM `posts` ORDER BY `created_at` DESC")
+	err := db.Select(&results,
+		"SELECT p.id, p.user_id, p.body, p.mime, p.created_at"+
+			" FROM `posts` AS p JOIN `users` AS u ON (p.user_id=u.id) "+
+			"WHERE u.del_flg=0 ORDER BY p.created_at DESC LIMIT ?", postsPerPage)
 	if err != nil {
 		log.Print(err)
 		return
@@ -550,12 +555,17 @@ func getPostsID(w http.ResponseWriter, r *http.Request) {
 	}
 
 	results := []Post{}
-	err = db.Select(&results, "SELECT * FROM `posts` WHERE `id` = ?", pid)
+	err = db.Select(&results,
+		"SELECT * FROM `posts` WHERE `id` = ?", pid)
 	if err != nil {
 		log.Print(err)
 		return
 	}
 
+	// err := db.Select(&results,
+	// 	"SELECT p.id, p.user_id, p.body, p.mime, p.created_at"+
+	// 		" FROM `posts` AS p JOIN `users` AS u ON (p.user_id=u.id) "+
+	// 		"WHERE u.del_flg=0 ORDER BY p.created_at DESC LIMIT ?", postsPerPage)
 	posts, err := makePosts(results, getCSRFToken(r), true)
 	if err != nil {
 		log.Print(err)
